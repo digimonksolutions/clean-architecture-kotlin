@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Crypto Capital</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="coins">Coins</string>
+    <string name="read_more">…read more</string>
+    <string name="additional_details">Additional Details</string>
+    <string name="current_price">Current Price</string>
+    <string name="market_capitalization">Market Capitalization</string>
+    <string name="about_the_coin">About the coin</string>
+</resources>

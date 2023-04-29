@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="alert_no_internet">No internet connection. Please check your internet connection.</string>
+    <string name="alert_parsing_error">Parsing error! Please try again after some time!</string>
+    <string name="alert_connection_time_out">Connection TimeOut! Please check your internet connection.</string>
+</resources>
