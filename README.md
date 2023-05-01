@@ -13,39 +13,26 @@ This app also shows the usage of the Navigation Architecture Component.
 
 ## Architecture
 The Clean Architecture MVVM pattern emphasizes the separation of concerns and modularity of code by organizing it into distinct layers. The pattern encourages a clear separation between business logic and presentation logic, and promotes testability and maintainability of the codebase. This approach can be particularly useful for large-scale projects, where code organization and scalability become increasingly important. In this approach, the Clean Architecture principles are combined with the MVVM (Model-View-ViewModel) pattern and implemented using the Kotlin programming language.
-![](screenshots/app_architecture.png)
+
+![](https://assets.toptal.io/images?url=https://uploads.toptal.io/blog/image/127608/toptal-blog-image-1543413671794-80993a19fea97477524763c908b50a7a.png)
 
 ## Modules:
-* **app module** - It uses all the components and classes releated to Android Framework. It gets the data from domain layer and shows on UI. (**access all the modules**)
+* **app module** - It uses all the components and classes related to Android Framework. It gets the data from domain layer and shows on UI. (**access all the modules**)
 * **data** - The data layer implements the repository interface that the domain layer defines. This layer provide a single source of truth for data. It contains `remote` (which holds code to get data from webserver), `Local` (which holds code to get data from local DB ), `sharedPref` (which holds code to get data from Shared Preference) (Kotlin module that **can only access domain module**)
 * **domain** - The domain layer contains the UseCases that encapsulate a single and very specific task that can be performed. This task is part of the business logic of the application. (Kotlin module that **cannot access any other module**)
 * **base_module** - Contains all the base classes like `BaseFragment`, `BaseViewModel` and `BaseAdapter` which helps to reduce the duplication of the code. (**access data and domain modules**)
 
 
 ## Module and Package Structure
-**App Module**
+**App Module Layer**
 
-    com.cryptocapital     # Root Package
-    ├── base
-    |   ├── base fragment       # For reducing duplicate code in fragments.
-    |   ├── base adapter        # For reducing duplicate code in adapters.
-    |   └── base viewmodel      # For reducing duplicate code in viewmodels. 
-    |
+    com.cleanarchitecture.cryptocapital     # Root Package
     ├── data                    # For data handling.
     │   ├── resource            # Resource class to handle the different possible outcomes
-    │   ├── remote              # Remote Data Handlers     
-    |   │   ├── api             # Retrofit API for remote end point.
-    │   └── repository          # Single source of data.
     |
     ├── di                  
-    │   └── koin modules        # for dependency injection 
+    │   └── app koin module     # dependency injection for app layer
     |
-    ├── extensions                  
-    │   └── context extension   # extensions classes to reduce boiler code
-    |
-    ├── model                  
-    │   └── data class          # POJO classes
-    | 
     ├── ui  
     |   ├── activity            # Activities in the apps
     |   |   ├── main            # Main Activity 
@@ -58,110 +45,59 @@ The Clean Architecture MVVM pattern emphasizes the separation of concerns and mo
     |
     └── utils                   # Utility Classes
 
-**Base Module**
+**Base Module Layer**
 
-    com.cryptocapital     # Root Package
+    com.digi.base_module     # Root Package
     ├── base
     |   ├── base fragment       # For reducing duplicate code in fragments.
     |   ├── base adapter        # For reducing duplicate code in adapters.
-    |   └── base viewmodel      # For reducing duplicate code in viewmodels. 
-    |
-    ├── data                    # For data handling.
-    │   ├── resource            # Resource class to handle the different possible outcomes
-    │   ├── remote              # Remote Data Handlers     
-    |   │   ├── api             # Retrofit API for remote end point.
-    │   └── repository          # Single source of data.
-    |
-    ├── di                  
-    │   └── koin modules        # for dependency injection 
+    |   └── base viewmodel      # For reducing duplicate code in viewmodels.
     |
     ├── extensions                  
     │   └── context extension   # extensions classes to reduce boiler code
     |
-    ├── model                  
-    │   └── data class          # POJO classes
-    | 
-    ├── ui  
-    |   ├── activity            # Activities in the apps
-    |   |   ├── main            # Main Activity 
-    |           ├── adapter     # Adapters used in main activity
-    |           └── viewmodel   # View Models used in main activity 
-    |   ├── fragment            # Fragments in the apps
-    |   |   ├── coinlist        # Coin List Fragment 
-    |           ├── adapter     # Adapters used in Coin List Fragment
-    |           └── viewmodel   # View Models used in Coin List Fragment
+    ├── navigation                  
+    │   └── navigation command   # a data class to handle fragment navigation
     |
     └── utils                   # Utility Classes
 
-**Data Module**
+**Data Module Layer**
 
-    com.cryptocapital     # Root Package
-    ├── base
-    |   ├── base fragment       # For reducing duplicate code in fragments.
-    |   ├── base adapter        # For reducing duplicate code in adapters.
-    |   └── base viewmodel      # For reducing duplicate code in viewmodels. 
+    com.cleanarchitecture.data     # Root Package
+    ├── repository
+    |   ├── RemoteRepoImpl      # This class will implement remote interface declared in domain layer
+    |   ├── SharedPrefRepoImpl  # This class will implement sharedPref interface declared in domain layer
+    |   └── LocalRepoImpl       # This class will implement local interface declared in domain layer 
     |
-    ├── data                    # For data handling.
-    │   ├── resource            # Resource class to handle the different possible outcomes
-    │   ├── remote              # Remote Data Handlers     
-    |   │   ├── api             # Retrofit API for remote end point.
-    │   └── repository          # Single source of data.
+    ├── source                 
+    │   ├── remote              
+    |   │   └── api             # Retrofit API for remote end point.
+    │   ├── local                  
+    |   │   └── room            # Room DB for local database.
+    │   └── sharedPref            
+    |       └── tinyDB          # helper class to use sharedPref Easily
     |
-    ├── di                  
-    │   └── koin modules        # for dependency injection 
+    └── koin                  
+        └── data koin module    # dependency injection for data layer
+
+**Domain Module Layer**
+
+    com.cleanarchitecture.domain     # Root Package
+    ├── interactor
+    |   ├── use cases                    # mediator between the app layer and the data layer,
     |
-    ├── extensions                  
-    │   └── context extension   # extensions classes to reduce boiler code
+    ├── repository                      
+    │   ├── remote repo interface        # remote methods that is implemented in data layer
+    │   ├── sharedpref repo interface    # sharedPref methods that is implemented in data layer    
+    │   └── local repo interface         # local DB methods that is implemented in data layer
+    |
+    ├── koin                  
+    │   └── domain koin modules          # dependency injection for domain layer
     |
     ├── model                  
-    │   └── data class          # POJO classes
-    | 
-    ├── ui  
-    |   ├── activity            # Activities in the apps
-    |   |   ├── main            # Main Activity 
-    |           ├── adapter     # Adapters used in main activity
-    |           └── viewmodel   # View Models used in main activity 
-    |   ├── fragment            # Fragments in the apps
-    |   |   ├── coinlist        # Coin List Fragment 
-    |           ├── adapter     # Adapters used in Coin List Fragment
-    |           └── viewmodel   # View Models used in Coin List Fragment
+    │   └── data class                   # POJO classes
     |
-    └── utils                   # Utility Classes
-
-**Domain Module**
-
-    com.cryptocapital     # Root Package
-    ├── base
-    |   ├── base fragment       # For reducing duplicate code in fragments.
-    |   ├── base adapter        # For reducing duplicate code in adapters.
-    |   └── base viewmodel      # For reducing duplicate code in viewmodels. 
-    |
-    ├── data                    # For data handling.
-    │   ├── resource            # Resource class to handle the different possible outcomes
-    │   ├── remote              # Remote Data Handlers     
-    |   │   ├── api             # Retrofit API for remote end point.
-    │   └── repository          # Single source of data.
-    |
-    ├── di                  
-    │   └── koin modules        # for dependency injection 
-    |
-    ├── extensions                  
-    │   └── context extension   # extensions classes to reduce boiler code
-    |
-    ├── model                  
-    │   └── data class          # POJO classes
-    | 
-    ├── ui  
-    |   ├── activity            # Activities in the apps
-    |   |   ├── main            # Main Activity 
-    |           ├── adapter     # Adapters used in main activity
-    |           └── viewmodel   # View Models used in main activity 
-    |   ├── fragment            # Fragments in the apps
-    |   |   ├── coinlist        # Coin List Fragment 
-    |           ├── adapter     # Adapters used in Coin List Fragment
-    |           └── viewmodel   # View Models used in Coin List Fragment
-    |
-    └── utils                   # Utility Classes
+    └── response                         # A wrapper class to handle possible outcomes from remote 
 
 
 
@@ -187,9 +123,9 @@ The Clean Architecture MVVM pattern emphasizes the separation of concerns and mo
 ## Unit Testing
 Covered Coin List ViewModel, Coin Detail ViewModel, Rest Client and Utility Testing.
 
-- ### CoinListViewmodel Unit Test
+- ### CoinListViewModel Unit Test
     ![](screenshots/coinlistviewmodel_test.png)
-- ### CoinDetailViewmodel Unit Test
+- ### CoinDetailViewModel Unit Test
     ![](screenshots/coint_detail_viewmodel_test_screenshot.png) 
 - ### RestClient Unit Test
     ![](screenshots/restclient_test_screenshot.png)
